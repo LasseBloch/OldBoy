@@ -17,14 +17,15 @@ public:
     T operator()() const
     {
         return val_;
+
     }
 
-    T& operator++()
+    void operator++(int)
     {
         val_++;
     }
 
-    T& operator--()
+    void operator--(int)
     {
         val_--;
     }

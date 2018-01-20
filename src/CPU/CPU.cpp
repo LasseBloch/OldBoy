@@ -15,6 +15,17 @@ void CPU::regsTest() {
     test = regs.A();
     std::cout << "RegA: " << test << std::endl;
 
+    regs.A++;
+
+    test = regs.A();
+    std::cout << "RegA: " << test << std::endl;
+
+    regs.A--;
+    regs.A--;
+    test = regs.A();
+    std::cout << "RegA: " << test << std::endl;
+
+
     std::bitset<16> regAF(regs.AF());
     std::cout << "RegAF: " << regAF << std::endl;
 
