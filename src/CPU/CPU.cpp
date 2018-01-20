@@ -30,6 +30,15 @@ void CPU::regsTest() {
     test = regs.F();
     std::cout << "RegF: " << test << std::endl;
     regAF = regs.AF();
-    std::cout << "RegAF: " << regAF << std::endl;
+    std::cout << "RegAF: " << regs.AF() << " "<< regAF << std::endl;
+    regs.AF++;
+    regAF = regs.AF();
+    std::cout << "RegAF: " << regs.AF() << " " << regAF << std::endl;
+
+    regs.AF = 1;
+    std::cout << "RegAF: " <<  " " << regs.AF() << std::endl;
+    regs.AF++;
+    std::cout << "RegAF: " <<  " " << regs.AF() << std::endl;
+
 
 }

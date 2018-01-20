@@ -18,6 +18,17 @@ public:
     {
         return val_;
     }
+
+    T& operator++()
+    {
+        val_++;
+    }
+
+    T& operator--()
+    {
+        val_--;
+    }
+
 private:
     T val_ = 0;
 };

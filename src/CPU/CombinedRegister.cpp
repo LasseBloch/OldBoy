@@ -9,13 +9,22 @@ CombinedRegister::CombinedRegister(Register<uint8_t>& high, Register<uint8_t>& l
 
 }
 
-uint16_t CombinedRegister::operator()() const
+uint16_t CombinedRegister::operator()()
 {
-    return (high_() << 8) | low_();
+    val_ = (high_() << 8) | low_();
+    return val_;
+}
+
+void CombinedRegister::operator++(int)
+{
+    val_++;
+    low_ = val_ >> 8;
+    high_ = val_;
 }
 
 void CombinedRegister::operator=(uint16_t val)
 {
+    low_ = (val >> 8);
     high_ = val;
-    low_ = val >> 8;
+    val_ = val;
 }

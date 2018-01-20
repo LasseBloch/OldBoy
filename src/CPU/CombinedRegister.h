@@ -9,11 +9,13 @@
 class CombinedRegister {
 public:
     CombinedRegister(Register<uint8_t>& high, Register<uint8_t>& low);
-    uint16_t operator()() const;
+    uint16_t operator()();
     void operator=(uint16_t val);
+    void operator++(int);
 private:
     Register<uint8_t>& high_;
     Register<uint8_t>& low_;
+    uint16_t val_;
 };
 
 #endif //OLDBOY_COMBINEDREGISTER_H
