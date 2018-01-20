@@ -1,10 +1,21 @@
 #include <iostream>
 #include <assert.h>
-#include "Registers.h"
-
+#include "src/CPU/Registers.h"
+#include "src/CPU/Register.h"
 int main()
 {
     Registers regs;
+
+    Register A;
+
+    std::bitset<8> test(A());
+    std::cout << "First: " << test << std::endl;
+
+    A = (uint8_t)0xFF;
+
+    test = A();
+    std::cout << "second: " << test << std::endl;
+
 
     regs.setA(0xEF);
     std::bitset<8> regA(regs.getA());
