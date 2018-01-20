@@ -4,13 +4,14 @@
 
 #ifndef OLDBOY_CPU_H
 #define OLDBOY_CPU_H
-#include <cstdint>
-
-
+#include "Registers.h"
 
 class CPU {
+public:
+    // HOW need unit tests?
+    void regsTest();
 private:
-
+    Registers regs;
 };
 
 #endif //OLDBOY_CPU_H

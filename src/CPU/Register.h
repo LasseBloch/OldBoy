@@ -6,14 +6,20 @@
 #define OLDBOY_REGISTER_H
 #include <cstdint>
 
-
+template <class T>
 class Register {
 public:
-    Register& operator=(uint8_t val);
-    uint8_t operator()();
+    void operator=(T val)
+    {
+        this->val_ = val;
+    }
 
+    T operator()() const
+    {
+        return val_;
+    }
 private:
-    uint8_t val_;
+    T val_ = 0;
 };
 
 #endif //OLDBOY_REGISTER_H
