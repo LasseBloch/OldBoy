@@ -24,7 +24,7 @@ void Memory::loadCartridge(std::string romPath)
         } 
         else
         {
-            std::cout << "Ups GameBoy Cartridges are only supported to hold 32kB" << std::endl;
+            std::cout << "Ups GameBoy Cartridges are only supposed to hold 32kB" << std::endl;
             break;
         }
     }
