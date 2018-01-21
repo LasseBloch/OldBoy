@@ -58,3 +58,14 @@ void CPU::regsTest() {
     regs.Flag.C() ? regs.Flag.setC(false) : regs.Flag.setC(true);
 
 }
+void CPU::initialize()
+{
+    // initialize registers and memory
+}
+
+void CPU::emulateCycle()
+{
+    // Fetch opcode
+    // Decode opcode
+    // Execute opcode: Keep in mind some opcodes take multiple cycles to complete
+}

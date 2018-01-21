@@ -8,7 +8,11 @@
 
 class CPU {
 public:
-    // HOW need unit tests?
+    // Initialize regs and memory
+    void initialize();
+    // Emulate one clock cycle
+    void emulateCycle();
+    // WHO need unit tests?
     void regsTest();
 private:
     Registers regs;
