@@ -51,5 +51,10 @@ void CPU::regsTest() {
     regs.AF++;
     std::cout << "RegAF: " <<  " " << regs.AF() << std::endl;
 
+    regs.Flag.Z() ? regs.Flag.setZ(false) : regs.Flag.setZ(true);
+
+    regs.Flag.H() ? regs.Flag.setH(false) : regs.Flag.setH(true);
+    regs.Flag.N() ? regs.Flag.setN(false) : regs.Flag.setN(true);
+    regs.Flag.C() ? regs.Flag.setC(false) : regs.Flag.setC(true);
 
 }

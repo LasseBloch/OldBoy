@@ -7,6 +7,7 @@
 #include <cstdint>
 #include "Register.h"
 #include "CombinedRegister.h"
+#include "Flags.h"
 
 using Reg8Bit = Register<uint8_t>;
 using Reg16Bit = Register<uint16_t>;
@@ -25,6 +26,7 @@ private:
     Reg8Bit C;
     Reg8Bit D;
     Reg8Bit E;
+    // Also used as Flag register
     Reg8Bit F;
     Reg8Bit H;
     Reg8Bit L;
@@ -38,7 +40,7 @@ private:
     CombinedRegister BC;
     CombinedRegister DE;
     CombinedRegister HL;
-
+    Flags Flag;
 
 };
 
