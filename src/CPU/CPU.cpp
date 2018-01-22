@@ -73,3 +73,9 @@ CPU::CPU(GBMemory& mem) : mem_(mem)
 {
 
 }
+void CPU::opCodesTest()
+{
+    opCodes_.executeOpcode(00);
+    opCodes_.executeOpcode(0xBE);
+    opCodes_.executeOpcode(0xFE);
+}

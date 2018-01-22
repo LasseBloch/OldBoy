@@ -6,6 +6,7 @@
 #define OLDBOY_CPU_H
 #include "Registers.h"
 #include "GBMemory.h"
+#include "OpCodes.h"
 
 class CPU {
 public:
@@ -16,9 +17,11 @@ public:
     void emulateCycle();
     // WHO need unit tests?
     void regsTest();
+    void opCodesTest();
 private:
     Registers regs;
     GBMemory& mem_;
+    OpCodes opCodes_;
 };
 
 #endif //OLDBOY_CPU_H
