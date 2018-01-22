@@ -11,4 +11,5 @@ GameBoy::GameBoy() : CPU_(mem_)
     CPU_.regsTest();
     CPU_.opCodesTest();
     CPU_.initialize();
+    CPU_.emulateCycle();
 }

@@ -42,6 +42,8 @@ class GBMemory {
 public:
     void loadCartridge(std::string romPath);
     void loadBootLoader();
+    uint8_t& operator[](int i);
+    uint8_t& operator[](uint16_t i);
 private:
     std::array<uint8_t, 0xFFFF> mem_;
     uint16_t cartridgeStart_ = 0x0000;

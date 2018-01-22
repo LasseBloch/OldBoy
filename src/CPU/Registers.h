@@ -14,12 +14,12 @@ using Reg16Bit = Register<uint16_t>;
 
 class Registers {
 
-friend class CPU;
 
 public:
     Registers();
-
-private:
+    // TODO: encapsulate again, problem the OpCodes class need to manipulate registers
+    //    friend class CPU;
+    //private:
     // The eight 8-bit general purpose registers
     Reg8Bit A;
     Reg8Bit B;

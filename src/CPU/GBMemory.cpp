@@ -39,3 +39,13 @@ void GBMemory::loadBootLoader()
         mem_[n] = bootSequence_[n];
     }
 }
+
+uint8_t& GBMemory::operator[](int i)
+{
+    return mem_[i];
+}
+
+uint8_t& GBMemory::operator[](uint16_t i)
+{
+    return mem_[i];
+}

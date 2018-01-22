@@ -10,6 +10,8 @@
 #include "Registers.h"
 #include "GBMemory.h"
 #include <iostream>
+
+
 // This might be the most stupid idea ever
 struct OpCode
 {
@@ -21,12 +23,16 @@ struct OpCode
 
 
 class OpCodes {
+    friend class CPU;
 public:
-    OpCodes();
+    OpCodes(GBMemory& mem_, Registers& regs_);
     void executeOpcode(uint8_t opcode);
-
+    OpCode& getOpcode(uint8_t opcode);
 private:
-    std::array<OpCode, 256> opcodes;
+    std::array<OpCode, 256> opcodes_;
+    // references to be given to the lambdas
+    Registers &regs_;
+    GBMemory &mem_;
 
 };
 

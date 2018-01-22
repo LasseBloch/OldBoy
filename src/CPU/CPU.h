@@ -19,7 +19,8 @@ public:
     void regsTest();
     void opCodesTest();
 private:
-    Registers regs;
+    bool lastOpcodeComplete;
+    Registers regs_;
     GBMemory& mem_;
     OpCodes opCodes_;
 };

@@ -7,75 +7,89 @@
 
 void CPU::regsTest() {
 
-    std::bitset<8> test(regs.A());
+    std::bitset<8> test(regs_.A());
     std::cout << "RegA: " << test << std::endl;
 
-    regs.A = 0xFF;
+    regs_.A = 0xFF;
 
-    test = regs.A();
+    test = regs_.A();
     std::cout << "RegA: " << test << std::endl;
 
-    regs.A++;
+    regs_.A++;
 
-    test = regs.A();
+    test = regs_.A();
     std::cout << "RegA: " << test << std::endl;
 
-    regs.A--;
-    regs.A--;
-    test = regs.A();
+    regs_.A--;
+    regs_.A--;
+    test = regs_.A();
     std::cout << "RegA: " << test << std::endl;
 
 
-    std::bitset<16> regAF(regs.AF());
+    std::bitset<16> regAF(regs_.AF());
     std::cout << "RegAF: " << regAF << std::endl;
 
-    regs.A = 0xBE;
-    regs.F = 0xEF;
+    regs_.A = 0xBE;
+    regs_.F = 0xEF;
 
-    regAF = regs.AF();
+    regAF = regs_.AF();
     std::cout << "RegAF: " << regAF << std::endl;
 
-    regs.AF = 0B0111001100110011;
-    test = regs.A();
+    regs_.AF = 0B0111001100110011;
+    test = regs_.A();
     std::cout << "RegA: " << test << std::endl;
-    test = regs.F();
+    test = regs_.F();
     std::cout << "RegF: " << test << std::endl;
-    regAF = regs.AF();
-    std::cout << "RegAF: " << regs.AF() << " "<< regAF << std::endl;
-    regs.AF++;
-    regAF = regs.AF();
-    std::cout << "RegAF: " << regs.AF() << " " << regAF << std::endl;
+    regAF = regs_.AF();
+    std::cout << "RegAF: " << regs_.AF() << " "<< regAF << std::endl;
+    regs_.AF++;
+    regAF = regs_.AF();
+    std::cout << "RegAF: " << regs_.AF() << " " << regAF << std::endl;
 
-    regs.AF = 1;
-    std::cout << "RegAF: " <<  " " << regs.AF() << std::endl;
-    regs.AF++;
-    std::cout << "RegAF: " <<  " " << regs.AF() << std::endl;
+    regs_.AF = 1;
+    std::cout << "RegAF: " <<  " " << regs_.AF() << std::endl;
+    regs_.AF++;
+    std::cout << "RegAF: " <<  " " << regs_.AF() << std::endl;
 
-    regs.Flag.Z() ? regs.Flag.setZ(false) : regs.Flag.setZ(true);
+    regs_.Flag.Z() ? regs_.Flag.setZ(false) : regs_.Flag.setZ(true);
 
-    regs.Flag.H() ? regs.Flag.setH(false) : regs.Flag.setH(true);
-    regs.Flag.N() ? regs.Flag.setN(false) : regs.Flag.setN(true);
-    regs.Flag.C() ? regs.Flag.setC(false) : regs.Flag.setC(true);
+    regs_.Flag.H() ? regs_.Flag.setH(false) : regs_.Flag.setH(true);
+    regs_.Flag.N() ? regs_.Flag.setN(false) : regs_.Flag.setN(true);
+    regs_.Flag.C() ? regs_.Flag.setC(false) : regs_.Flag.setC(true);
 
 }
 void CPU::initialize()
 {
     // initialize registers and memory
+    regs_.PC = 0x0000;
+    lastOpcodeComplete = true;
 }
 
 void CPU::emulateCycle()
 {
+
     // Fetch opcode
+    auto opcodeVal = mem_[regs_.PC()];
+    // The PC should not always be incremented
+    regs_.PC++;
     // Decode opcode
-    // Execute opcode: Keep in mind some opcodes take multiple cycles to complete
+    auto opCode = opCodes_.getOpcode(opcodeVal);
+    // Execute opcode: Keep in mind some opcodes_ take multiple cycles to complete
+    // TODO wait x clock cycles
+    opCode.work();
+
+
 }
-CPU::CPU(GBMemory& mem) : mem_(mem)
+CPU::CPU(GBMemory& mem) :mem_(mem), opCodes_(mem_, regs_)
 {
 
 }
+
 void CPU::opCodesTest()
 {
     opCodes_.executeOpcode(00);
     opCodes_.executeOpcode(0xBE);
     opCodes_.executeOpcode(0xFE);
+    auto opCode = opCodes_.getOpcode(0x02);
+    opCode.work();
 }
