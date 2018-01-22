@@ -5,9 +5,11 @@
 #ifndef OLDBOY_CPU_H
 #define OLDBOY_CPU_H
 #include "Registers.h"
+#include "GBMemory.h"
 
 class CPU {
 public:
+    CPU(GBMemory& mem);
     // Initialize regs and memory
     void initialize();
     // Emulate one clock cycle
@@ -16,6 +18,7 @@ public:
     void regsTest();
 private:
     Registers regs;
+    GBMemory& mem_;
 };
 
 #endif //OLDBOY_CPU_H

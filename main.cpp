@@ -1,11 +1,10 @@
 
-#include "src/CPU/CPU.h"
+#include "src/CPU/GameBoy.h"
 
 
 
 int main()
 {
-    CPU cpu;
-    cpu.regsTest();
+    GameBoy gb;
     return 0;
 }

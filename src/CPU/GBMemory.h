@@ -18,7 +18,7 @@
  *  --------------------------- FF00
  *  Empty but unusable for I/O
  *  --------------------------- FEA0
- *  Sprite Attrib Memory (OAM)
+ *  Sprite Attrib GBMemory (OAM)
  *  --------------------------- FE00
  *  Echo of 8kB Internal RAM
  *  --------------------------- E000
@@ -38,15 +38,16 @@
  *  writing a byte to C000 will appear at C000 and E000.)
  */
 
-class Memory {
+class GBMemory {
 public:
     void loadCartridge(std::string romPath);
+    void loadBootLoader();
 private:
     std::array<uint8_t, 0xFFFF> mem_;
     uint16_t cartridgeStart_ = 0x0000;
     uint16_t cartridgeEnd_ = 0x8000;
     // For documentation of bootSequence see http://gbdev.gg8.se/wiki/articles/Gameboy_Bootstrap_ROM#Contents_of_the_ROM
-    static constexpr std::array<uint8_t, 256> bootSequence {0x31, 0xFE, 0xFF, 0xAF, 0x21, 0xFF, 0x9F, 0x32, 0xCB, 0x7C,
+    static constexpr std::array<uint8_t, 256> bootSequence_ {0x31, 0xFE, 0xFF, 0xAF, 0x21, 0xFF, 0x9F, 0x32, 0xCB, 0x7C,
                                                             0x20, 0xFB, 0x21, 0x26, 0xFF, 0x0E, 0x11, 0x3E, 0x80, 0x32,
                                                             0xE2, 0x0C, 0x3E, 0xF3, 0xE2, 0x32, 0x3E, 0x77, 0x77, 0x3E,
                                                             0xFC, 0xE0, 0x47, 0x11, 0x04, 0x01, 0x21, 0x10, 0x80, 0x1A,

@@ -5,9 +5,9 @@
 #include <fstream>
 #include <assert.h>
 #include <iostream>
-#include "Memory.h"
+#include "GBMemory.h"
 
-void Memory::loadCartridge(std::string romPath)
+void GBMemory::loadCartridge(std::string romPath)
 {
     std::ifstream myFile;
 
@@ -31,4 +31,11 @@ void Memory::loadCartridge(std::string romPath)
 
     std::cout << "Done" << std::endl;
 
+}
+void GBMemory::loadBootLoader()
+{
+    for(int n = 0; n < bootSequence_.size(); n++)
+    {
+        mem_[n] = bootSequence_[n];
+    }
 }

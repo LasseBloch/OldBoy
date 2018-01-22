@@ -69,3 +69,7 @@ void CPU::emulateCycle()
     // Decode opcode
     // Execute opcode: Keep in mind some opcodes take multiple cycles to complete
 }
+CPU::CPU(GBMemory& mem) : mem_(mem)
+{
+
+}
