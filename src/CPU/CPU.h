@@ -10,7 +10,7 @@
 
 class CPU {
 public:
-    CPU(GBMemory& mem);
+    explicit CPU(GBMemory& mem);
     // Initialize regs and memory
     void initialize();
     // Emulate one clock cycle
@@ -19,10 +19,11 @@ public:
     void regsTest();
     void opCodesTest();
 private:
-    bool lastOpcodeComplete;
     Registers regs_;
     GBMemory& mem_;
     OpCodes opCodes_;
+    long long cycleCount_;
+    long long cycleCountWhenComplete_;
 };
 
 #endif //OLDBOY_CPU_H

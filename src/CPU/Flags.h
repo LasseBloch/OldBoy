@@ -9,15 +9,16 @@
 
 class Flags {
 public:
-    Flags(Register<uint8_t>& reg);
+    explicit Flags(Register<uint8_t>& reg);
     bool Z() const;
     void setZ(bool val);
     bool N() const;
     void setN(bool val);
     bool H() const;
-    void setH(bool val) const;
+    void setH(bool val);
     bool C() const;
     void setC(bool val);
+    void resetAllFlags();
 
 private:
     Register<uint8_t>& flagRegister_;

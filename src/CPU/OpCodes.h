@@ -34,6 +34,10 @@ private:
     Registers &regs_;
     GBMemory &mem_;
 
+    void xor_a(uint8_t val);
+    void resetFlags();
+    void setZ();
+
 };
 
 #endif //OLDBOY_OPCODES_H

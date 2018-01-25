@@ -33,7 +33,7 @@ bool Flags::H() const
     return (flagRegister_() | H_);
 }
 
-void Flags::setH(bool val) const
+void Flags::setH(bool val)
 {
     flagRegister_ = val ? flagRegister_() | H_ : flagRegister_() ^ H_;
 }
@@ -46,4 +46,9 @@ bool Flags::C() const
 void Flags::setC(bool val)
 {
     flagRegister_ = val ? flagRegister_() | C_ : flagRegister_() ^ C_;
+}
+
+void Flags::resetAllFlags()
+{
+    flagRegister_ = 0;
 }

@@ -62,22 +62,28 @@ void CPU::initialize()
 {
     // initialize registers and memory
     regs_.PC = 0x0000;
-    lastOpcodeComplete = true;
+    regs_.SP = 0xFFFE;
+    regs_.A = 0xFE;
 }
 
 void CPU::emulateCycle()
 {
 
-    // Fetch opcode
-    auto opcodeVal = mem_[regs_.PC()];
-    // The PC should not always be incremented
-    regs_.PC++;
-    // Decode opcode
-    auto opCode = opCodes_.getOpcode(opcodeVal);
-    // Execute opcode: Keep in mind some opcodes_ take multiple cycles to complete
-    // TODO wait x clock cycles
-    opCode.work();
-
+    if (cycleCount_>=cycleCountWhenComplete_) {
+        cycleCountWhenComplete_ = cycleCount_;
+        // Fetch opcode
+        // Assume opcode fetch takes 4 cycles
+        auto opcodeVal = mem_[regs_.PC()];
+        cycleCountWhenComplete_ += 4;
+        // The PC should not always be incremented
+        regs_.PC++;
+        // Decode opcode
+        auto opCode = opCodes_.getOpcode(opcodeVal);
+        // Execute opcode: Keep in mind some opcodes_ take multiple cycles to complete
+        cycleCountWhenComplete_ += opCode.cyclesToComplete;
+        opCode.work();
+    }
+    cycleCount_++;
 
 }
 CPU::CPU(GBMemory& mem) :mem_(mem), opCodes_(mem_, regs_)
@@ -87,6 +93,7 @@ CPU::CPU(GBMemory& mem) :mem_(mem), opCodes_(mem_, regs_)
 
 void CPU::opCodesTest()
 {
+    return;
     opCodes_.executeOpcode(00);
     opCodes_.executeOpcode(0xBE);
     opCodes_.executeOpcode(0xFE);
