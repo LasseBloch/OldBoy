@@ -33,6 +33,373 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
 
     // 8 Bit ALU
 
+    // 8-Bit loads
+
+    // LD nn.n
+    // Use with nn = B, C, D, E, H, L, BC, DE, HL, SP
+    // n = 8 bit immediate values
+    {
+        auto& LDSP = opcodes_[0x06];
+        LDSP.opCode = 0x06;
+        LDSP.cyclesToComplete = 8;
+        LDSP.name = "LD B,n";
+        LDSP.work = [&] {
+          regs_.PC++;
+          regs_.B = mem_[regs_.PC()];
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x0E];
+        LDSP.opCode = 0x0E;
+        LDSP.cyclesToComplete = 8;
+        LDSP.name = "LD C,n";
+        LDSP.work = [&] {
+          regs_.PC++;
+          regs_.C = mem_[regs_.PC()];
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x16];
+        LDSP.opCode = 0x16;
+        LDSP.cyclesToComplete = 8;
+        LDSP.name = "LD D,n";
+        LDSP.work = [&] {
+          regs_.PC++;
+          regs_.D = mem_[regs_.PC()];
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x1E];
+        LDSP.opCode = 0x1E;
+        LDSP.cyclesToComplete = 8;
+        LDSP.name = "LD E,n";
+        LDSP.work = [&] {
+          regs_.PC++;
+          regs_.E = mem_[regs_.PC()];
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x26];
+        LDSP.opCode = 0x26;
+        LDSP.cyclesToComplete = 8;
+        LDSP.name = "LD H,n";
+        LDSP.work = [&] {
+          regs_.PC++;
+          regs_.H = mem_[regs_.PC()];
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x2E];
+        LDSP.opCode = 0x2E;
+        LDSP.cyclesToComplete = 8;
+        LDSP.name = "LD L,n";
+        LDSP.work = [&] {
+          regs_.PC++;
+          regs_.L = mem_[regs_.PC()];
+        };
+    }
+
+    // LD r1, r2
+    // put value r2 into r1
+    // Use with: r1, r2 = A, B, C, D, E, H, L, (HL)
+    {
+        auto& LDSP = opcodes_[0x7F];
+        LDSP.opCode = 0x7F;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD A,A";
+        LDSP.work = [&] {
+          regs_.A = regs_.A();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x78];
+        LDSP.opCode = 0x78;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD A,B";
+        LDSP.work = [&] {
+          regs_.A = regs_.B();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x79];
+        LDSP.opCode = 0x79;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD A,C";
+        LDSP.work = [&] {
+          regs_.A = regs_.C();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x7A];
+        LDSP.opCode = 0x7A;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD A,D";
+        LDSP.work = [&] {
+          regs_.A = regs_.D();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x7B];
+        LDSP.opCode = 0x7B;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD A,E";
+        LDSP.work = [&] {
+          regs_.A = regs_.E();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x7C];
+        LDSP.opCode = 0x7C;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD A,H";
+        LDSP.work = [&] {
+          regs_.A = regs_.H();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x7D];
+        LDSP.opCode = 0x7D;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD A,L";
+        LDSP.work = [&] {
+          regs_.A = regs_.L();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x7E];
+        LDSP.opCode = 0x7E;
+        LDSP.cyclesToComplete = 8;
+        LDSP.name = "LD A,A";
+        LDSP.work = [&] {
+          regs_.A = mem_[regs_.HL()];
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x40];
+        LDSP.opCode = 0x40;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD B,B";
+        LDSP.work = [&] {
+          regs_.B = regs_.B();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x41];
+        LDSP.opCode = 0x41;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD B,C";
+        LDSP.work = [&] {
+          regs_.B = regs_.C();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x42];
+        LDSP.opCode = 0x42;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD B,D";
+        LDSP.work = [&] {
+          regs_.B = regs_.D();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x43];
+        LDSP.opCode = 0x43;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD B,E";
+        LDSP.work = [&] {
+          regs_.B = regs_.E();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x44];
+        LDSP.opCode = 0x44;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD B,H";
+        LDSP.work = [&] {
+          regs_.B = regs_.H();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x45];
+        LDSP.opCode = 0x45;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD B,L";
+        LDSP.work = [&] {
+          regs_.B = regs_.H();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x46];
+        LDSP.opCode = 0x46;
+        LDSP.cyclesToComplete = 8;
+        LDSP.name = "LD B,HL";
+        LDSP.work = [&] {
+          regs_.B = mem_[regs_.HL()];
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x48];
+        LDSP.opCode = 0x48;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD C,B";
+        LDSP.work = [&] {
+          regs_.C = regs_.B();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x49];
+        LDSP.opCode = 0x49;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD C,C";
+        LDSP.work = [&] {
+          regs_.C = regs_.C();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x4A];
+        LDSP.opCode = 0x4A;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD C,D";
+        LDSP.work = [&] {
+          regs_.C = regs_.D();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x4B];
+        LDSP.opCode = 0x4B;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD C,E";
+        LDSP.work = [&] {
+          regs_.C = regs_.E();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x4C];
+        LDSP.opCode = 0x4C;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD C,H";
+        LDSP.work = [&] {
+          regs_.C = regs_.H();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x4D];
+        LDSP.opCode = 0x4D;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD C,L";
+        LDSP.work = [&] {
+          regs_.C = regs_.L();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x4E];
+        LDSP.opCode = 0x4E;
+        LDSP.cyclesToComplete = 8;
+        LDSP.name = "LD C,B";
+        LDSP.work = [&] {
+          regs_.C = mem_[regs_.HL()];
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x50];
+        LDSP.opCode = 0x50;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD D,B";
+        LDSP.work = [&] {
+          regs_.D = regs_.B();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x51];
+        LDSP.opCode = 0x51;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD D,C";
+        LDSP.work = [&] {
+          regs_.D = regs_.C();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x52];
+        LDSP.opCode = 0x52;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD D,D";
+        LDSP.work = [&] {
+          regs_.D = regs_.D();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x53];
+        LDSP.opCode = 0x53;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD D,E";
+        LDSP.work = [&] {
+          regs_.D = regs_.E();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x54];
+        LDSP.opCode = 0x54;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD D,H";
+        LDSP.work = [&] {
+          regs_.D = regs_.H();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x55];
+        LDSP.opCode = 0x55;
+        LDSP.cyclesToComplete = 4;
+        LDSP.name = "LD D,L";
+        LDSP.work = [&] {
+          regs_.D = regs_.L();
+        };
+    }
+
+    {
+        auto& LDSP = opcodes_[0x56];
+        LDSP.opCode = 0x56;
+        LDSP.cyclesToComplete = 8;
+        LDSP.name = "LD D,HL";
+        LDSP.work = [&] {
+          regs_.D = mem_[regs_.HL()];
+        };
+    }
+
+
+
+
     // XOR n
     // Logical exclusive OR n with register A, result in A
 
