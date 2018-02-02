@@ -22,6 +22,14 @@ void CombinedRegister::operator++(int)
     high_ = val_;
 }
 
+void CombinedRegister::operator--(int)
+{
+    val_--;
+    low_ = val_ >> 8;
+    high_ = val_;
+}
+
+
 void CombinedRegister::operator=(uint16_t val)
 {
     low_ = (val >> 8);

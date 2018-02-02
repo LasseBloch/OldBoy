@@ -12,6 +12,7 @@ public:
     uint16_t operator()();
     void operator=(uint16_t val);
     void operator++(int);
+    void operator--(int);
 private:
     Register<uint8_t>& high_;
     Register<uint8_t>& low_;
