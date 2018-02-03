@@ -40,6 +40,7 @@
 
 class GBMemory {
 public:
+    GBMemory();
     void loadCartridge(std::string romPath);
     void loadBootLoader();
     uint8_t& operator[](int i);

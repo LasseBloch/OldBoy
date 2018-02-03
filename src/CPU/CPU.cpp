@@ -2,6 +2,7 @@
 // Created by Lasse Lauritsen on 17/01/2018.
 //
 #include <iostream>
+#include <cassert>
 
 #include "CPU.h"
 
@@ -51,11 +52,35 @@ void CPU::regsTest() {
     regs_.AF++;
     std::cout << "RegAF: " <<  " " << regs_.AF() << std::endl;
 
+    regs_.Flag.resetAllFlags();
     regs_.Flag.Z() ? regs_.Flag.setZ(false) : regs_.Flag.setZ(true);
+    assert(regs_.Flag.Z() == true);
+    regs_.Flag.setZ(true);
+    assert(regs_.Flag.Z() == true);
+    regs_.Flag.setZ(false);
+    assert(regs_.Flag.Z() == false);
+
 
     regs_.Flag.H() ? regs_.Flag.setH(false) : regs_.Flag.setH(true);
     regs_.Flag.N() ? regs_.Flag.setN(false) : regs_.Flag.setN(true);
     regs_.Flag.C() ? regs_.Flag.setC(false) : regs_.Flag.setC(true);
+
+
+    regs_.HL = 0xFFFF;
+    assert(regs_.HL() == 0xFFFF);
+    regs_.HL--;
+    assert(regs_.HL() == 0xFFFE);
+    regs_.HL++;
+    assert(regs_.HL() == 0xFFFF);
+
+    regs_.HL = 0x00FF;
+    std::printf("H is %x\n", regs_.H());
+    assert(regs_.H() == 0x00);
+    assert(regs_.L() == 0xFF);
+    regs_.HL++;
+    assert(regs_.HL() == 0x0100);
+    assert(regs_.H() == 0x01);
+    assert(regs_.L() == 0x00);
 
 }
 void CPU::initialize()
@@ -81,6 +106,7 @@ void CPU::emulateCycle()
         auto opCode = opCodes_.getOpcode(opcodeVal);
         // Execute opcode: Keep in mind some opcodes_ take multiple cycles to complete
         cycleCountWhenComplete_ += opCode.cyclesToComplete;
+        std::printf("Exe opcode: %x - %s\n", opCode.opCode, opCode.name.c_str());
         opCode.work();
     }
     cycleCount_++;

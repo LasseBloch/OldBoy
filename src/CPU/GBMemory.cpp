@@ -49,3 +49,10 @@ uint8_t& GBMemory::operator[](uint16_t i)
 {
     return mem_[i];
 }
+GBMemory::GBMemory()
+{
+    for(int n = 0; n < mem_.size(); n++)
+    {
+        mem_[n] = 0xFF;
+    }
+}

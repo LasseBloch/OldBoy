@@ -33,8 +33,12 @@ private:
     // references to be given to the lambdas
     Registers &regs_;
     GBMemory &mem_;
-
+    void executeOpcodes(uint8_t bitOpcode);
+    bool bitSetInReg(int regVal, int bitPos);
+    void bit(int regVal, int bitPos);
     void xor_a(uint8_t val);
+    uint8_t incrementRegister(uint8_t reg) const;
+    void incrementRegister(Reg16Bit& reg);
     void resetFlags();
     void setZ();
 

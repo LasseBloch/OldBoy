@@ -18,21 +18,21 @@ uint16_t CombinedRegister::operator()()
 void CombinedRegister::operator++(int)
 {
     val_++;
-    low_ = val_ >> 8;
-    high_ = val_;
+    low_ = val_;
+    high_ = val_ >> 8;
 }
 
 void CombinedRegister::operator--(int)
 {
     val_--;
-    low_ = val_ >> 8;
-    high_ = val_;
+    low_ = val_;
+    high_ = val_ >> 8;
 }
 
 
 void CombinedRegister::operator=(uint16_t val)
 {
-    low_ = (val >> 8);
-    high_ = val;
+    low_ = val;
+    high_ = (val >> 8);
     val_ = val;
 }

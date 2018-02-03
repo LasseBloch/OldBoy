@@ -22,7 +22,7 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         auto& opcode = opcodes_[0x31];
         opcode.opCode = 0x31;
         opcode.cyclesToComplete = 12;
-        opcode.name = "opcode";
+        opcode.name = "LD SP ";
         opcode.work = [&] {
           regs_.SP = (mem_[regs_.PC()] << 8 | mem_[regs_.PC()+1]);
           // increment PC because this operation takes two bytes from mem
@@ -44,8 +44,8 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 8;
         opcode.name = "LD B,n";
         opcode.work = [&] {
-          regs_.PC++;
           regs_.B = mem_[regs_.PC()];
+          regs_.PC++;
         };
     }
 
@@ -55,8 +55,8 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 8;
         opcode.name = "LD C,n";
         opcode.work = [&] {
-          regs_.PC++;
           regs_.C = mem_[regs_.PC()];
+          regs_.PC++;
         };
     }
 
@@ -66,8 +66,8 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 8;
         opcode.name = "LD D,n";
         opcode.work = [&] {
-          regs_.PC++;
           regs_.D = mem_[regs_.PC()];
+          regs_.PC++;
         };
     }
 
@@ -77,8 +77,8 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 8;
         opcode.name = "LD E,n";
         opcode.work = [&] {
-          regs_.PC++;
           regs_.E = mem_[regs_.PC()];
+          regs_.PC++;
         };
     }
 
@@ -88,8 +88,8 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 8;
         opcode.name = "LD H,n";
         opcode.work = [&] {
-          regs_.PC++;
           regs_.H = mem_[regs_.PC()];
+          regs_.PC++;
         };
     }
 
@@ -99,8 +99,8 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 8;
         opcode.name = "LD L,n";
         opcode.work = [&] {
-          regs_.PC++;
           regs_.L = mem_[regs_.PC()];
+          regs_.PC++;
         };
     }
 
@@ -181,9 +181,20 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         auto& opcode = opcodes_[0x7E];
         opcode.opCode = 0x7E;
         opcode.cyclesToComplete = 8;
-        opcode.name = "LD A,A";
+        opcode.name = "LD A,HL";
         opcode.work = [&] {
           regs_.A = mem_[regs_.HL()];
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x3E];
+        opcode.opCode = 0x3E;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "LD A,#";
+        opcode.work = [&] {
+          regs_.A = mem_[regs_.PC()];
+          regs_.PC++;
         };
     }
 
@@ -796,15 +807,158 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         };
     }
 
-    // The following is out of order
     {
         auto& opcode = opcodes_[0x32];
         opcode.opCode = 0x32;
         opcode.cyclesToComplete = 8;
-        opcode.name = "LDD (HL),A";
+        opcode.name = "LDD (HL-),A";
         opcode.work = [&] {
           mem_[regs_.HL()] = regs_.A();
           regs_.HL--;
+          printf("HL is: %x \n", regs_.HL());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0xCB];
+        opcode.opCode = 0xCB;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "Bit Opcode";
+        opcode.work = [&] {
+            uint8_t bitOpcode = mem_[regs_.PC()];
+            executeOpcodes(bitOpcode);
+            regs_.PC++;
+        };
+    }
+
+    // JR CC,N
+    // Description:
+    // If following condition is true then add n to current address and jump to it:
+    //
+    // Use with:
+    // n = one byte signed immediate value
+    // cc = NZ, Jump if Z flag is reset.
+    // cc=Z, JumpifZflagisset.
+    // cc = NC, Jump if C flag is reset.
+    // cc=C, JumpifCflagisset.
+    {
+        auto& opcode = opcodes_[0x20];
+        opcode.opCode = 0x20;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "JR NZ, *";
+        opcode.work = [&] {
+          bool zeroFlag = regs_.Flag.Z();
+          if (!regs_.Flag.Z())
+          {
+              int8_t n = (int8_t)mem_[regs_.PC()];
+              // Jump
+              regs_.PC = regs_.PC() + n;
+              std::printf("Jump to %x\n", regs_.PC() + 1);
+          }
+          else
+          {
+              std::cout << "no jump" << std::endl;
+          }
+          regs_.PC++;
+        };
+    }
+
+    // LD (C),A
+    // Puts A into address 0xFF00 + register C
+    {
+        auto& opcode = opcodes_[0xE2];
+        opcode.opCode = 0xE2;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "LD (C),A";
+        opcode.work = [&] {
+          mem_[0xFF00 + regs_.C()] = regs_.A();
+        };
+    }
+
+    // INC N
+    // Increment register
+    // Flags affected:
+    // Z - set if result is zero
+    // N - reset.
+    // H - Set if carry from bit 3
+    // C - Not affected
+    {
+        auto& opcode = opcodes_[0x3C];
+        opcode.opCode = 0x3C;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "INC A";
+        opcode.work = [&] {
+         regs_.A = incrementRegister(regs_.A());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x04];
+        opcode.opCode = 0x04;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "INC B";
+        opcode.work = [&] {
+          regs_.B = incrementRegister(regs_.B());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x0C];
+        opcode.opCode = 0x0C;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "INC C";
+        opcode.work = [&] {
+          regs_.C = incrementRegister(regs_.C());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x14];
+        opcode.opCode = 0x14;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "INC D";
+        opcode.work = [&] {
+          regs_.D = incrementRegister(regs_.D());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x1C];
+        opcode.opCode = 0x1C;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "INC E";
+        opcode.work = [&] {
+          regs_.E = incrementRegister(regs_.E());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x24];
+        opcode.opCode = 0x24;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "INC H";
+        opcode.work = [&] {
+          regs_.H = incrementRegister(regs_.H());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x2C];
+        opcode.opCode = 0x2C;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "INC L";
+        opcode.work = [&] {
+          regs_.L = incrementRegister(regs_.L());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x34];
+        opcode.opCode = 0x34;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "INC (HL)";
+        opcode.work = [&] {
+          regs_.HL = incrementRegister(mem_[regs_.HL()]);
         };
     }
 
@@ -839,3 +993,67 @@ void OpCodes::xor_a(uint8_t val)
         setZ();
     }
 }
+
+void OpCodes::executeOpcodes(uint8_t bitOpcode)
+{
+
+    switch (bitOpcode) {
+    // BIT 7, H
+    case 0x7c:
+    {
+        bit(regs_.H(), 7);
+        std::printf("reg.h = %x\n", regs_.H());
+        break;
+    }
+    default:
+        std::printf("BitOpCode %X is not implemented\n", bitOpcode);
+        break;
+    }
+
+
+}
+bool OpCodes::bitSetInReg(int regVal, int bitPos)
+{
+    int mask = 1;
+    mask = mask << bitPos;
+    return regVal & mask;
+}
+
+void OpCodes::bit(int regVal, int bitPos)
+{
+    // If the bit value is 0 the Z flag is set
+
+    if (bitSetInReg(regVal, bitPos))
+    {
+        regs_.Flag.setZ(false);
+    }
+    else
+    {
+        regs_.Flag.setZ(true);
+    }
+    // Flag N is reset
+    regs_.Flag.setN(false);
+    regs_.Flag.setH(true);
+}
+
+uint8_t OpCodes::incrementRegister(uint8_t regVal) const
+{
+    // Check for carry bit
+    if (((((regVal & 0x0F)) + (1)) & 0x10) == 0x10)
+    {
+        regs_.Flag.setH(true);
+    }
+    else
+    {
+        regs_.Flag.setH(false);
+    }
+    regVal++;
+
+    if (regVal == 0)
+    {
+        regs_.Flag.setZ(true);
+    }
+    regs_.Flag.setN(false);
+    return  regVal;
+}
+
