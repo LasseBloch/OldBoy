@@ -799,7 +799,7 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 12;
         opcode.name = "LD HL, NN";
         opcode.work = [&] {
-          uint16_t val = mem_[regs_.PC()];;
+          uint16_t val = mem_[regs_.PC()];
           regs_.PC++;
           val = val | (mem_[regs_.PC()] << 8);
           regs_.HL = val;
@@ -874,6 +874,18 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
           mem_[0xFF00 + regs_.C()] = regs_.A();
         };
     }
+
+    // LDH (n), A
+    {
+        auto& opcode = opcodes_[0xE2];
+        opcode.opCode = 0xE2;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "LD (C),A";
+        opcode.work = [&] {
+          mem_[0xFF00 + regs_.C()] = regs_.A();
+        };
+    }
+
 
     // INC N
     // Increment register
@@ -959,6 +971,115 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.name = "INC (HL)";
         opcode.work = [&] {
           regs_.HL = incrementRegister(mem_[regs_.HL()]);
+        };
+    }
+
+    // LD n, A
+    // Description:
+    // Put value A into N
+
+    {
+        auto& opcode = opcodes_[0x47];
+        opcode.opCode = 0x47;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "LD B, A";
+        opcode.work = [&] {
+          regs_.B = regs_.A();
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x4F];
+        opcode.opCode = 0x4F;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "LD C, A";
+        opcode.work = [&] {
+          regs_.C = regs_.A();
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x57];
+        opcode.opCode = 0x57;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "LD D, A";
+        opcode.work = [&] {
+          regs_.D = regs_.A();
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x5F];
+        opcode.opCode = 0x5F;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "LD E, A";
+        opcode.work = [&] {
+          regs_.E = regs_.A();
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x67];
+        opcode.opCode = 0x67;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "LD H, A";
+        opcode.work = [&] {
+          regs_.H = regs_.A();
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x6F];
+        opcode.opCode = 0x6F;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "LD L, A";
+        opcode.work = [&] {
+          regs_.L = regs_.A();
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x02];
+        opcode.opCode = 0x02;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "LD (BC), A";
+        opcode.work = [&] {
+          mem_[regs_.BC()] = regs_.A();
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x12];
+        opcode.opCode = 0x12;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "LD (DE), A";
+        opcode.work = [&] {
+          mem_[regs_.DE()] = regs_.A();
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x77];
+        opcode.opCode = 0x77;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "LD (HL), A";
+        opcode.work = [&] {
+          mem_[regs_.HL()] = regs_.A();
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0xEA];
+        opcode.opCode = 0xEA;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "LD (NN), A";
+        opcode.work = [&] {
+          uint8_t low = mem_[regs_.PC()];
+          regs_.PC++;
+          uint8_t high = mem_[regs_.PC()];
+          regs_.PC++;
+          uint16_t loc = (high << 8) | low;
+          mem_[regs_.DE()] = regs_.A();
         };
     }
 
