@@ -1162,6 +1162,50 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         };
     }
 
+    // PUSH nn
+    // Push register pair nn onto stack, decrement Stack Pointer (SP) twice
+
+    {
+        auto& opcode = opcodes_[0xF5];
+        opcode.opCode = 0xF5;
+        opcode.cyclesToComplete = 16;
+        opcode.name = "PUSH AF";
+        opcode.work = [&] {
+          pushOntoStack(regs_.AF());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0xC5];
+        opcode.opCode = 0xC5;
+        opcode.cyclesToComplete = 16;
+        opcode.name = "PUSH BC";
+        opcode.work = [&] {
+          pushOntoStack(regs_.BC());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0xD5];
+        opcode.opCode = 0xD5;
+        opcode.cyclesToComplete = 16;
+        opcode.name = "PUSH DE";
+        opcode.work = [&] {
+          pushOntoStack(regs_.DE());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0xE5];
+        opcode.opCode = 0xE5;
+        opcode.cyclesToComplete = 16;
+        opcode.name = "PUSH HL";
+        opcode.work = [&] {
+          pushOntoStack(regs_.HL());
+        };
+    }
+
+
 }
 
 void OpCodes::executeOpcode(uint8_t opcode)
@@ -1251,13 +1295,12 @@ uint8_t OpCodes::incrementRegister(uint8_t regVal) const
 
 // Push address onto stack and decrement stack pointer
 // as the stacks grows downward
-// @ SP - 1 = upper byte
-// @ SP - 2 == lower byte
+// @ SP - 1 = high byte
+// @ SP - 2 == low byte
 void OpCodes::pushOntoStack(uint16_t address)
 {
-
     regs_.SP--;
-    mem_[regs_.SP()] = address << 8;
+    mem_[regs_.SP()] = address >> 8;
     regs_.SP--;
     mem_[regs_.SP()] = address;
     std::printf("pushOntoStack: push address %X at SP(%X), SP-1=%X SP-2=%X\n", address, regs_.SP() + 1,  mem_[regs_.SP() + 1], mem_[regs_.SP()]);
