@@ -17,14 +17,52 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
 
     // 16-Bit Loads
 
-    // LD SP params nn
+    // LD n, nn
+    // Put value nn into n
+
+    {
+        auto& opcode = opcodes_[0x01];
+        opcode.opCode = 0x01;
+        opcode.cyclesToComplete = 12;
+        opcode.name = "LD BC, nn";
+        opcode.work = [&] {
+          regs_.BC = (mem_[regs_.PC()] | mem_[regs_.PC()+1] << 8);
+          regs_.PC++;
+          regs_.PC++;
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x11];
+        opcode.opCode = 0x11;
+        opcode.cyclesToComplete = 12;
+        opcode.name = "LD DE, nn";
+        opcode.work = [&] {
+          regs_.DE = (mem_[regs_.PC()] | mem_[regs_.PC()+1] << 8);
+          regs_.PC++;
+          regs_.PC++;
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x21];
+        opcode.opCode = 0x21;
+        opcode.cyclesToComplete = 12;
+        opcode.name = "LD HL, nn";
+        opcode.work = [&] {
+          regs_.HL = (mem_[regs_.PC()] | mem_[regs_.PC()+1] << 8);
+          regs_.PC++;
+          regs_.PC++;
+        };
+    }
+
     {
         auto& opcode = opcodes_[0x31];
         opcode.opCode = 0x31;
         opcode.cyclesToComplete = 12;
-        opcode.name = "LD SP ";
+        opcode.name = "LD SP, nn";
         opcode.work = [&] {
-          regs_.SP = (mem_[regs_.PC()] << 8 | mem_[regs_.PC()+1]);
+          regs_.SP = (mem_[regs_.PC()] | mem_[regs_.PC()+1] << 8);
           // increment PC because this operation takes two bytes from mem
           regs_.PC++;
           regs_.PC++;
@@ -178,12 +216,46 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
     }
 
     {
+        auto& opcode = opcodes_[0x0A];
+        opcode.opCode = 0x0A;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "LD A,(BC)";
+        opcode.work = [&] {
+          regs_.A = mem_[regs_.BC()];
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x1A];
+        opcode.opCode = 0x1A;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "LD A,(DE)";
+        opcode.work = [&] {
+          regs_.A = mem_[regs_.DE()];
+        };
+    }
+
+    {
         auto& opcode = opcodes_[0x7E];
         opcode.opCode = 0x7E;
         opcode.cyclesToComplete = 8;
-        opcode.name = "LD A,HL";
+        opcode.name = "LD A, (HL)";
         opcode.work = [&] {
           regs_.A = mem_[regs_.HL()];
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0xFA];
+        opcode.opCode = 0xFA;
+        opcode.cyclesToComplete = 16;
+        opcode.name = "LD A,(NN)";
+        opcode.work = [&] {
+          uint16_t memAddr = (mem_[regs_.PC()] | mem_[regs_.PC()+1] << 8);
+          regs_.A = mem_[memAddr];
+          // increment PC because this operation takes two bytes from mem
+          regs_.PC++;
+          regs_.PC++;
         };
     }
 
@@ -793,19 +865,6 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
     }
 
     // The following is out of order
-    {
-        auto& opcode = opcodes_[0x21];
-        opcode.opCode = 0x21;
-        opcode.cyclesToComplete = 12;
-        opcode.name = "LD HL, NN";
-        opcode.work = [&] {
-          uint16_t val = mem_[regs_.PC()];
-          regs_.PC++;
-          val = val | (mem_[regs_.PC()] << 8);
-          regs_.HL = val;
-          regs_.PC++;
-        };
-    }
 
     {
         auto& opcode = opcodes_[0x32];
@@ -850,7 +909,7 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
           bool zeroFlag = regs_.Flag.Z();
           if (!regs_.Flag.Z())
           {
-              int8_t n = (int8_t)mem_[regs_.PC()];
+              auto n = (int8_t)mem_[regs_.PC()];
               // Jump
               regs_.PC = regs_.PC() + n;
               std::printf("Jump to %x\n", regs_.PC() + 1);
@@ -863,29 +922,31 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         };
     }
 
+    // LD (n), A
+    // Put a into memory address 0xFF00 + n
+    // n = one byt immediate value
+    {
+        auto& opcode = opcodes_[0xE0];
+        opcode.opCode = 0xE0;
+        opcode.cyclesToComplete = 12;
+        opcode.name = "LD (N),A";
+        opcode.work = [&] {
+          mem_[0xFF00 + mem_[regs_.PC()]] = regs_.A();
+          regs_.PC++;
+        };
+    }
+
     // LD (C),A
     // Puts A into address 0xFF00 + register C
     {
         auto& opcode = opcodes_[0xE2];
         opcode.opCode = 0xE2;
-        opcode.cyclesToComplete = 8;
+        opcode.cyclesToComplete = 12;
         opcode.name = "LD (C),A";
         opcode.work = [&] {
           mem_[0xFF00 + regs_.C()] = regs_.A();
         };
     }
-
-    // LDH (n), A
-    {
-        auto& opcode = opcodes_[0xE2];
-        opcode.opCode = 0xE2;
-        opcode.cyclesToComplete = 8;
-        opcode.name = "LD (C),A";
-        opcode.work = [&] {
-          mem_[0xFF00 + regs_.C()] = regs_.A();
-        };
-    }
-
 
     // INC N
     // Increment register
@@ -1083,6 +1144,23 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         };
     }
 
+    // Calls
+
+    // CALL nn
+    // Push address of next instruction onto stack and then jump to address nn
+    {
+        auto& opcode = opcodes_[0xCD];
+        opcode.opCode = 0xCD;
+        opcode.cyclesToComplete = 12;
+        opcode.name = "CALL, nn";
+        opcode.work = [&] {
+          uint16_t address = (mem_[regs_.PC()] | mem_[regs_.PC()+1] << 8);
+          regs_.PC++;
+          regs_.PC++;
+          pushOntoStack(regs_.PC());
+          regs_.PC = address;
+        };
+    }
 
 }
 
@@ -1159,15 +1237,8 @@ void OpCodes::bit(int regVal, int bitPos)
 
 uint8_t OpCodes::incrementRegister(uint8_t regVal) const
 {
-    // Check for carry bit
-    if (((((regVal & 0x0F)) + (1)) & 0x10) == 0x10)
-    {
-        regs_.Flag.setH(true);
-    }
-    else
-    {
-        regs_.Flag.setH(false);
-    }
+    // Set half-carry flag
+    regs_.Flag.setH(((((regVal & 0x0F)) + (1)) & 0x10) == 0x10);
     regVal++;
 
     if (regVal == 0)
@@ -1176,5 +1247,19 @@ uint8_t OpCodes::incrementRegister(uint8_t regVal) const
     }
     regs_.Flag.setN(false);
     return  regVal;
+}
+
+// Push address onto stack and decrement stack pointer
+// as the stacks grows downward
+// @ SP - 1 = upper byte
+// @ SP - 2 == lower byte
+void OpCodes::pushOntoStack(uint16_t address)
+{
+
+    regs_.SP--;
+    mem_[regs_.SP()] = address << 8;
+    regs_.SP--;
+    mem_[regs_.SP()] = address;
+    std::printf("pushOntoStack: push address %X at SP(%X), SP-1=%X SP-2=%X\n", address, regs_.SP() + 1,  mem_[regs_.SP() + 1], mem_[regs_.SP()]);
 }
 

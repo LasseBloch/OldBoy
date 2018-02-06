@@ -42,6 +42,9 @@ private:
     void resetFlags();
     void setZ();
 
+    void pushOntoStack(uint16_t address);
+    uint16_t popFromStack();
+
 };
 
 #endif //OLDBOY_OPCODES_H
