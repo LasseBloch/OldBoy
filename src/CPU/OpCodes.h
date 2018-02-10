@@ -41,6 +41,7 @@ private:
     void incrementRegister(Reg16Bit& reg);
     void resetFlags();
     void setZ();
+    uint8_t RLn(uint8_t val);
 
     void pushOntoStack(uint16_t address);
     uint16_t popFromStack();

@@ -1241,6 +1241,17 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
 {
 
     switch (bitOpcode) {
+    // RL C
+    case 0x11:
+    {
+        auto before = regs_.C();
+        auto after = RLn(before);
+        regs_.C = after;
+        std::printf("RL C = before rotate: %X after %X \n", before, after);
+        break;
+    }
+
+
     // BIT 7, H
     case 0x7c:
     {
@@ -1255,6 +1266,21 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
 
 
 }
+
+
+// Rotate n left through Carry flag.
+
+uint8_t OpCodes::RLn(uint8_t val)
+{
+    uint8_t c = (val >> 7) & 0x01;
+    val = (val << 1) | c;
+    regs_.Flag.resetAllFlags();
+    regs_.Flag.setC(c);
+    regs_.Flag.setZ(!val);
+    return val;
+}
+
+
 bool OpCodes::bitSetInReg(int regVal, int bitPos)
 {
     int mask = 1;

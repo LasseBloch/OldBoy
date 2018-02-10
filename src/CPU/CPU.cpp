@@ -100,6 +100,7 @@ void CPU::emulateCycle()
         // Assume opcode fetch takes 4 cycles
         auto opcodeVal = mem_[regs_.PC()];
         cycleCountWhenComplete_ += 4;
+        std::printf("%X ", regs_.PC());
         // The PC should not always be incremented
         regs_.PC++;
         // Decode opcode
