@@ -884,9 +884,9 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 8;
         opcode.name = "Bit Opcode";
         opcode.work = [&] {
-            uint8_t bitOpcode = mem_[regs_.PC()];
-            executeOpcodes(bitOpcode);
-            regs_.PC++;
+          uint8_t bitOpcode = mem_[regs_.PC()];
+          executeOpcodes(bitOpcode);
+          regs_.PC++;
         };
     }
 
@@ -907,15 +907,13 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.name = "JR NZ, *";
         opcode.work = [&] {
           bool zeroFlag = regs_.Flag.Z();
-          if (!regs_.Flag.Z())
-          {
-              auto n = (int8_t)mem_[regs_.PC()];
+          if (!regs_.Flag.Z()) {
+              auto n = (int8_t) mem_[regs_.PC()];
               // Jump
-              regs_.PC = regs_.PC() + n;
-              std::printf("Jump to %x\n", regs_.PC() + 1);
+              regs_.PC = regs_.PC()+n;
+              std::printf("Jump to %x\n", regs_.PC()+1);
           }
-          else
-          {
+          else {
               std::cout << "no jump" << std::endl;
           }
           regs_.PC++;
@@ -931,7 +929,7 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 12;
         opcode.name = "LD (N),A";
         opcode.work = [&] {
-          mem_[0xFF00 + mem_[regs_.PC()]] = regs_.A();
+          mem_[0xFF00+mem_[regs_.PC()]] = regs_.A();
           regs_.PC++;
         };
     }
@@ -944,7 +942,7 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 12;
         opcode.name = "LD (C),A";
         opcode.work = [&] {
-          mem_[0xFF00 + regs_.C()] = regs_.A();
+          mem_[0xFF00+regs_.C()] = regs_.A();
         };
     }
 
@@ -961,7 +959,7 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.cyclesToComplete = 4;
         opcode.name = "INC A";
         opcode.work = [&] {
-         regs_.A = incrementRegister(regs_.A());
+          regs_.A = incrementRegister(regs_.A());
         };
     }
 
@@ -1205,6 +1203,8 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         };
     }
 
+    // RLA
+    // Rotate A left through Carry flag
 
 }
 
@@ -1345,7 +1345,6 @@ uint8_t OpCodes::RLn(uint8_t val)
     return val;
 }
 
-
 bool OpCodes::bitSetInReg(int regVal, int bitPos)
 {
     int mask = 1;
@@ -1357,12 +1356,10 @@ void OpCodes::bit(int regVal, int bitPos)
 {
     // If the bit value is 0 the Z flag is set
 
-    if (bitSetInReg(regVal, bitPos))
-    {
+    if (bitSetInReg(regVal, bitPos)) {
         regs_.Flag.setZ(false);
     }
-    else
-    {
+    else {
         regs_.Flag.setZ(true);
     }
     // Flag N is reset
@@ -1373,15 +1370,14 @@ void OpCodes::bit(int regVal, int bitPos)
 uint8_t OpCodes::incrementRegister(uint8_t regVal) const
 {
     // Set half-carry flag
-    regs_.Flag.setH(((((regVal & 0x0F)) + (1)) & 0x10) == 0x10);
+    regs_.Flag.setH(((((regVal & 0x0F))+(1)) & 0x10)==0x10);
     regVal++;
 
-    if (regVal == 0)
-    {
+    if (regVal==0) {
         regs_.Flag.setZ(true);
     }
     regs_.Flag.setN(false);
-    return  regVal;
+    return regVal;
 }
 
 // Push address onto stack and decrement stack pointer
@@ -1394,6 +1390,7 @@ void OpCodes::pushOntoStack(uint16_t address)
     mem_[regs_.SP()] = address >> 8;
     regs_.SP--;
     mem_[regs_.SP()] = address;
-    std::printf("pushOntoStack: push address %X at SP(%X), SP-1=%X SP-2=%X\n", address, regs_.SP() + 1,  mem_[regs_.SP() + 1], mem_[regs_.SP()]);
+    std::printf("pushOntoStack: push address %X at SP(%X), SP-1=%X SP-2=%X\n", address, regs_.SP()+1,
+            mem_[regs_.SP()+1], mem_[regs_.SP()]);
 }
 
