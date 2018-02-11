@@ -1242,12 +1242,11 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
 
     switch (bitOpcode) {
 
-    //RL N
-    // Rotate n left throught Carry Flag
+        //RL N
+        // Rotate n left throught Carry Flag
 
-    // RL A
-    case 0x17:
-    {
+        // RL A
+    case 0x17: {
         auto before = regs_.A();
         auto after = RLn(before);
         regs_.A = after;
@@ -1255,9 +1254,8 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
         break;
     }
 
-    // RL B
-    case 0x10:
-    {
+        // RL B
+    case 0x10: {
         auto before = regs_.B();
         auto after = RLn(before);
         regs_.B = after;
@@ -1265,9 +1263,8 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
         break;
     }
 
-    // RL C
-    case 0x11:
-    {
+        // RL C
+    case 0x11: {
         auto before = regs_.C();
         auto after = RLn(before);
         regs_.C = after;
@@ -1275,9 +1272,8 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
         break;
     }
 
-    // RL D
-    case 0x12:
-    {
+        // RL D
+    case 0x12: {
         auto before = regs_.D();
         auto after = RLn(before);
         regs_.D = after;
@@ -1285,9 +1281,8 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
         break;
     }
 
-    // RL E
-    case 0x13:
-    {
+        // RL E
+    case 0x13: {
         auto before = regs_.E();
         auto after = RLn(before);
         regs_.E = after;
@@ -1295,9 +1290,8 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
         break;
     }
 
-    // RL H
-    case 0x14:
-    {
+        // RL H
+    case 0x14: {
         auto before = regs_.H();
         auto after = RLn(before);
         regs_.H = after;
@@ -1305,40 +1299,37 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
         break;
     }
 
-    // RL L
-    case 0x15:
-    {
-        auto before = regs_.L();
-        auto after = RLn(before);
-        regs_.L = after;
-        std::printf("RL L = before rotate: %X after %X \n", before, after);
-        break;
-    }
+        // RL L
+    case 0x15: {
+        {
+            auto before = regs_.L();
+            auto after = RLn(before);
+            regs_.L = after;
+            std::printf("RL L = before rotate: %X after %X \n", before, after);
+            break;
+        }
 
-    // RL (HL)
-    case 0x15:
-    {
+        // RL (HL)
+    case 0x16: {
         auto before = mem_[regs_.HL()];
         auto after = RLn(before);
-        mem_[regs_.HL] = after;
+        mem_[regs_.HL()] = after;
         std::printf("RL (HL) = before rotate: %X after %X \n", before, after);
         break;
     }
 
 
         // BIT 7, H
-    case 0x7c:
-    {
+    case 0x7c: {
         bit(regs_.H(), 7);
         std::printf("reg.h = %x\n", regs_.H());
         break;
     }
-    default:
-        std::printf("BitOpCode %X is not implemented\n", bitOpcode);
+    default:std::printf("BitOpCode %X is not implemented\n", bitOpcode);
         break;
     }
 
-
+    }
 }
 
 
