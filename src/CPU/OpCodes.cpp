@@ -1203,8 +1203,69 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         };
     }
 
+    // POP
+    // Pop two bytes off stack into register pair nn, increment Stack Pointer (SP) twice
+
+    // POP AF
+    {
+        auto& opcode = opcodes_[0xF1];
+        opcode.opCode = 0xF1;
+        opcode.cyclesToComplete = 12;
+        opcode.name = "POP AF";
+        opcode.work = [&] {
+          regs_.AF = popFromStack();
+        };
+    }
+
+    // POP BC
+    {
+        auto& opcode = opcodes_[0xC1];
+        opcode.opCode = 0xC1;
+        opcode.cyclesToComplete = 12;
+        opcode.name = "POP BC";
+        opcode.work = [&] {
+          regs_.BC = popFromStack();
+        };
+    }
+
+    // POP DE
+    {
+        auto& opcode = opcodes_[0xD1];
+        opcode.opCode = 0xD1;
+        opcode.cyclesToComplete = 12;
+        opcode.name = "POP DE";
+        opcode.work = [&] {
+          regs_.DE = popFromStack();
+        };
+    }
+
+    // POP HL
+    {
+        auto& opcode = opcodes_[0xE1];
+        opcode.opCode = 0xE1;
+        opcode.cyclesToComplete = 12;
+        opcode.name = "POP HL";
+        opcode.work = [&] {
+          regs_.HL = popFromStack();
+        };
+    }
+
+
     // RLA
     // Rotate A left through Carry flag
+    {
+        auto& opcode = opcodes_[0x17];
+        opcode.opCode = 0x17;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "RLA";
+        opcode.work = [&] {
+          auto before = regs_.A();
+          auto after = RLn(before);
+          regs_.A = after;
+          std::printf("RL A = before rotate: %X after %X \n", before, after);
+        };
+    }
+
 
 }
 
@@ -1243,7 +1304,7 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
     switch (bitOpcode) {
 
         //RL N
-        // Rotate n left throught Carry Flag
+        // Rotate n left through Carry Flag
 
         // RL A
     case 0x17: {
@@ -1260,6 +1321,7 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
         auto after = RLn(before);
         regs_.B = after;
         std::printf("RL B = before rotate: %X after %X \n", before, after);
+        break;
         break;
     }
 
@@ -1392,5 +1454,15 @@ void OpCodes::pushOntoStack(uint16_t address)
     mem_[regs_.SP()] = address;
     std::printf("pushOntoStack: push address %X at SP(%X), SP-1=%X SP-2=%X\n", address, regs_.SP()+1,
             mem_[regs_.SP()+1], mem_[regs_.SP()]);
+}
+
+// Pop address/value from stack and increment stack pointer
+uint16_t OpCodes::popFromStack()
+{
+    uint16_t value = mem_[regs_.SP()];
+    regs_.SP++;
+    value |= mem_[regs_.SP()] << 8;
+    regs_.SP++;
+    return value;
 }
 
