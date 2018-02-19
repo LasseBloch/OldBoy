@@ -11,16 +11,13 @@
 #include "GBMemory.h"
 #include <iostream>
 
-
 // This might be the most stupid idea ever
-struct OpCode
-{
-    uint8_t opCode = 0;
-    uint8_t cyclesToComplete = 0;
-    std::string name = "Not impplemented";
-    std::function<void()> work;//(Registers& regs, GBMemory &memory)> work;
+struct OpCode {
+  uint8_t opCode = 0;
+  uint8_t cyclesToComplete = 0;
+  std::string name = "Not impplemented";
+  std::function<void()> work;//(Registers& regs, GBMemory &memory)> work;
 };
-
 
 class OpCodes {
     friend class CPU;
@@ -31,8 +28,8 @@ public:
 private:
     std::array<OpCode, 256> opcodes_;
     // references to be given to the lambdas
-    Registers &regs_;
-    GBMemory &mem_;
+    Registers& regs_;
+    GBMemory& mem_;
     void executeOpcodes(uint8_t bitOpcode);
     bool bitSetInReg(int regVal, int bitPos);
     void bit(int regVal, int bitPos);

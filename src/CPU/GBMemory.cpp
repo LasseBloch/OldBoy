@@ -3,7 +3,6 @@
 //
 
 #include <fstream>
-#include <assert.h>
 #include <iostream>
 #include "GBMemory.h"
 
@@ -15,15 +14,13 @@ void GBMemory::loadCartridge(std::string romPath)
 
     uint8_t byte;
     uint16_t currentAddr = cartridgeStart_;
-    while(myFile.good())
-    {
-        if (currentAddr <= cartridgeEnd_) {
+    while (myFile.good()) {
+        if (currentAddr<=cartridgeEnd_) {
             byte = myFile.get();
             mem_[currentAddr] = byte;
             currentAddr++;
-        } 
-        else
-        {
+        }
+        else {
             std::cout << "Ups GameBoy Cartridges are only supposed to hold 32kB" << std::endl;
             break;
         }
@@ -34,8 +31,7 @@ void GBMemory::loadCartridge(std::string romPath)
 }
 void GBMemory::loadBootLoader()
 {
-    for(int n = 0; n < bootSequence_.size(); n++)
-    {
+    for (int n = 0; n<bootSequence_.size(); n++) {
         mem_[n] = bootSequence_[n];
     }
 }
@@ -49,10 +45,10 @@ uint8_t& GBMemory::operator[](uint16_t i)
 {
     return mem_[i];
 }
+
 GBMemory::GBMemory()
 {
-    for(int n = 0; n < mem_.size(); n++)
-    {
-        mem_[n] = 0xFF;
+    for (auto& memLoc: mem_) {
+        memLoc = 0xFF;
     }
 }
