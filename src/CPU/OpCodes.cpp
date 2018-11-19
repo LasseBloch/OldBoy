@@ -1033,6 +1033,94 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         };
     }
 
+    // DEC
+    // Decrement register
+    // Used with flags:
+    // Z - Set if reselt is zero.
+    // N - Set.
+    // H - Set if no borrow from bit 4.
+    // C - Not affected.
+
+    {
+        auto& opcode = opcodes_[0x3D];
+        opcode.opCode = 0x3D;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "DEC A";
+        opcode.work = [&] {
+          regs_.A = decrementRegister(regs_.A());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x05];
+        opcode.opCode = 0x05;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "DEC B";
+        opcode.work = [&] {
+          regs_.B = decrementRegister(regs_.B());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x0D];
+        opcode.opCode = 0x0D;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "DEC C";
+        opcode.work = [&] {
+          regs_.C = decrementRegister(regs_.C());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x15];
+        opcode.opCode = 0x15;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "DEC D";
+        opcode.work = [&] {
+          regs_.D = decrementRegister(regs_.D());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x1D];
+        opcode.opCode = 0x1D;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "DEC E";
+        opcode.work = [&] {
+          regs_.E = decrementRegister(regs_.E());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x25];
+        opcode.opCode = 0x25;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "DEC H";
+        opcode.work = [&] {
+          regs_.H = decrementRegister(regs_.H());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x2D];
+        opcode.opCode = 0x2D;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "DEC L";
+        opcode.work = [&] {
+          regs_.L = decrementRegister(regs_.L());
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x35];
+        opcode.opCode = 0x35;
+        opcode.cyclesToComplete = 4;
+        opcode.name = "DEC HL";
+        opcode.work = [&] {
+          mem_[regs_.HL()] = decrementRegister(mem_[regs_.HL()]);
+        };
+    }
+
     // LD n, A
     // Description:
     // Put value A into N
@@ -1266,6 +1354,87 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         };
     }
 
+    // Out of order
+
+    // Put value at address HL into A. Increment HL.
+    {
+        auto& opcode = opcodes_[0x22];
+        opcode.opCode = 0x22;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "HLI A";
+        opcode.work = [&] {
+          mem_[regs_.HL()] = regs_.A();
+          regs_.HL++;
+        };
+    }
+
+    // INC nn incrementation opcodes
+    {
+        auto& opcode = opcodes_[0x03];
+        opcode.opCode = 0x03;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "INC BC";
+        opcode.work = [&] {
+          regs_.BC++;
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x13];
+        opcode.opCode = 0x13;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "INC DE";
+        opcode.work = [&] {
+          regs_.DE++;
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x23];
+        opcode.opCode = 0x23;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "INC HL";
+        opcode.work = [&] {
+          regs_.HL++;
+        };
+    }
+
+    {
+        auto& opcode = opcodes_[0x33];
+        opcode.opCode = 0x33;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "INC SP";
+        opcode.work = [&] {
+          regs_.SP++;
+        };
+    }
+
+    // RET pops two values of the stack and jumps to that location
+    {
+        auto& opcode = opcodes_[0xC9];
+        opcode.opCode = 0xC9;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "RET";
+        opcode.work = [&] {
+          auto address = popFromStack();
+          std::printf("Jump to %x\n", address);
+          regs_.PC = address;
+        };
+    }
+
+    // Restarts
+    // Push present address onto stack. Jump to address $0000 + n
+    {
+        auto& opcode = opcodes_[0xC9];
+        opcode.opCode = 0xC9;
+        opcode.cyclesToComplete = 8;
+        opcode.name = "RET";
+        opcode.work = [&] {
+          restart(0);
+        };
+    }
+
+
 
 }
 
@@ -1464,5 +1633,24 @@ uint16_t OpCodes::popFromStack()
     value |= mem_[regs_.SP()] << 8;
     regs_.SP++;
     return value;
+}
+
+uint8_t OpCodes::decrementRegister(uint8_t regVal) const
+{
+    // TODO: Borrow flag
+    regVal--;
+    if (regVal==0) {
+        regs_.Flag.setZ(true);
+    }
+    regs_.Flag.setN(true);
+    return regVal;
+
+}
+
+// push pressent address to stack and jumps to address 0000+zeroOffset
+void OpCodes::restart(uint8_t zeroOffset)
+{
+    pushOntoStack(regs_.PC());
+    regs_.PC = 0000 + zeroOffset;
 }
 

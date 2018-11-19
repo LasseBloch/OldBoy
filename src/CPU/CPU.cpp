@@ -3,7 +3,7 @@
 //
 #include <iostream>
 #include <cassert>
-
+#include <string>
 #include "CPU.h"
 
 void CPU::regsTest() {

@@ -35,6 +35,7 @@ private:
     void bit(int regVal, int bitPos);
     void xor_a(uint8_t val);
     uint8_t incrementRegister(uint8_t reg) const;
+    uint8_t decrementRegister(uint8_t regVal) const;
     void incrementRegister(Reg16Bit& reg);
     void resetFlags();
     void setZ();
@@ -42,6 +43,7 @@ private:
 
     void pushOntoStack(uint16_t address);
     uint16_t popFromStack();
+    void restart(uint8_t zeroOffset);
 
 };
 
