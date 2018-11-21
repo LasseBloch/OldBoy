@@ -3,15 +3,27 @@
 //
 
 #include "OpCodes.h"
+#include <exception>
+
+class operationNotImplemted : public std::exception
+{
+    virtual const char* what() const throw()
+    {
+        return "Operation not implemented";
+    }
+} noOpCodeExp;
+
 
 OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         :mem_(mem_), regs_(regs_)
 {
     // Initialize all opcodes_ to not implemented
     for (int n = 0; n<256; n++) {
-        OpCode temp;
-        temp.opCode = n;
-        temp.work = [=] { std::printf("OpCode %X is not implemented\n", n); };
+            OpCode temp;
+            temp.opCode = n;
+            temp.work = [=] { std::printf("OpCode %X is not implemented\n", n);
+            throw noOpCodeExp;
+        };
         opcodes_[n] = temp;
     }
 
@@ -874,7 +886,7 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         opcode.work = [&] {
           mem_[regs_.HL()] = regs_.A();
           regs_.HL--;
-          printf("HL is: %x \n", regs_.HL());
+          //printf("HL is: %x \n", regs_.HL());
         };
     }
 
@@ -914,7 +926,7 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
               std::printf("Jump to %x\n", regs_.PC()+1);
           }
           else {
-              std::cout << "no jump" << std::endl;
+             //std::cout << "no jump" << std::endl;
           }
           regs_.PC++;
         };
@@ -1036,7 +1048,7 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
     // DEC
     // Decrement register
     // Used with flags:
-    // Z - Set if reselt is zero.
+    // Z - Set if result is zero.
     // N - Set.
     // H - Set if no borrow from bit 4.
     // C - Not affected.
@@ -1491,7 +1503,6 @@ void OpCodes::executeOpcodes(uint8_t bitOpcode)
         regs_.B = after;
         std::printf("RL B = before rotate: %X after %X \n", before, after);
         break;
-        break;
     }
 
         // RL C
@@ -1621,8 +1632,7 @@ void OpCodes::pushOntoStack(uint16_t address)
     mem_[regs_.SP()] = address >> 8;
     regs_.SP--;
     mem_[regs_.SP()] = address;
-    std::printf("pushOntoStack: push address %X at SP(%X), SP-1=%X SP-2=%X\n", address, regs_.SP()+1,
-            mem_[regs_.SP()+1], mem_[regs_.SP()]);
+    std::printf("pushOntoStack: push address %X at SP(%X), SP-1=%X SP-2=%X\n", address, regs_.SP()+1, mem_[regs_.SP()+1], mem_[regs_.SP()]);
 }
 
 // Pop address/value from stack and increment stack pointer

@@ -94,14 +94,18 @@ void CPU::initialize()
 void CPU::emulateCycle()
 {
 
-    if (cycleCount_>=cycleCountWhenComplete_) {
+    if (cycleCount_ >= cycleCountWhenComplete_) {
         cycleCountWhenComplete_ = cycleCount_;
         // Fetch opcode
         // Assume opcode fetch takes 4 cycles
         auto opcodeVal = mem_[regs_.PC()];
         cycleCountWhenComplete_ += 4;
-        std::printf("%X ", regs_.PC());
+        std::printf("%4X ", regs_.PC());
         // The PC should not always be incremented
+        if (regs_.PC() == 0x27)
+        {
+            //printf("break\n");
+        }
         regs_.PC++;
         // Decode opcode
         auto opCode = opCodes_.getOpcode(opcodeVal);
@@ -126,4 +130,9 @@ void CPU::opCodesTest()
     opCodes_.executeOpcode(0xFE);
     auto opCode = opCodes_.getOpcode(0x02);
     opCode.work();
+}
+
+Registers& CPU::getRegs()
+{
+    return regs_;
 }

@@ -18,6 +18,8 @@ public:
     // WHO need unit tests?
     void regsTest();
     void opCodesTest();
+
+    Registers& getRegs();
 private:
     Registers regs_;
     GBMemory& mem_;

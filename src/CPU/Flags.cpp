@@ -25,7 +25,7 @@ void Flags::setZ(bool val)
         {
             assert(false);
         }
-        std::cout << "Zero flag set" << std::endl;
+        //std::cout << "Zero flag set" << std::endl;
     }
     else
     {
@@ -33,7 +33,7 @@ void Flags::setZ(bool val)
         {
             assert(false);
         }
-        std::cout << "Zero flag reset" << std::endl;
+        //std::cout << "Zero flag reset" << std::endl;
     }
 }
 
