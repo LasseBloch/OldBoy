@@ -1,4 +1,12 @@
 cmake_minimum_required(VERSION 3.9)
+
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+    SET_PROPERTY(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+    SET_PROPERTY(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+    message(STATUS "found CCACHE")
+endif(CCACHE_FOUND)
+
 project(OldBoy)
 
 set(CMAKE_CXX_STANDARD 17)
