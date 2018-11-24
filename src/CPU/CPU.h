@@ -15,6 +15,9 @@ public:
     void initialize();
     // Emulate one clock cycle
     void emulateCycle();
+
+    // For debugging purposes
+    void  runToNextPc();
     // WHO need unit tests?
     void regsTest();
     void opCodesTest();

@@ -1446,6 +1446,24 @@ OpCodes::OpCodes(GBMemory& mem_, Registers& regs_)
         };
     }
 
+    // Jumps
+
+    //JP nn
+    // Jumps to address nn
+    // use with two immediate value (LSB first)
+    {
+        auto& opcode = opcodes_[0xC3];
+        opcode.opCode = 0xC3;
+        opcode.cyclesToComplete = 12;
+        opcode.name = "JP";
+        opcode.work = [&] {
+          uint16_t address = (mem_[regs_.PC()] | mem_[regs_.PC()+1] << 8);
+          // Set pc to the new address
+          // TODO: should the stack be used for this call?
+          std::cout << "JP jumping to address: " << std::hex << address << '\n';
+          regs_.PC = address;
+        };
+    }
 
 
 }

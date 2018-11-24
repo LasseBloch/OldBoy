@@ -136,3 +136,11 @@ Registers& CPU::getRegs()
 {
     return regs_;
 }
+void CPU::runToNextPc()
+{
+    auto startPc = regs_.PC();
+    while (startPc == regs_.PC())
+    {
+        emulateCycle();
+    }
+}
