@@ -8,7 +8,8 @@
 
 GameBoy::GameBoy() : CPU_(mem_)
 {
-    mem_.loadCartridge("/Users/bl0ch/CLionProjects/OldBoy/cmake-build-debug/Tetris.gb");
+    //mem_.loadCartridge("/Users/bl0ch/CLionProjects/OldBoy/cmake-build-debug/Tetris.gb");
+    mem_.loadBootLoader();
     // just for testing
     CPU_.regsTest();
     CPU_.opCodesTest();
