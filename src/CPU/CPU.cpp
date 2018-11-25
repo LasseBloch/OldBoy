@@ -3,7 +3,7 @@
 //
 #include <iostream>
 #include <cassert>
-#include <string>
+
 #include "CPU.h"
 
 void CPU::regsTest() {
@@ -101,11 +101,6 @@ void CPU::emulateCycle()
         auto opcodeVal = mem_[regs_.PC()];
         cycleCountWhenComplete_ += 4;
         std::printf("%4X ", regs_.PC());
-        // The PC should not always be incremented
-        if (regs_.PC() == 0x27)
-        {
-            //printf("break\n");
-        }
         regs_.PC++;
         // Decode opcode
         auto opCode = opCodes_.getOpcode(opcodeVal);
@@ -138,9 +133,9 @@ Registers& CPU::getRegs()
 }
 void CPU::runToNextPc()
 {
-    auto startPc = regs_.PC();
-    while (startPc == regs_.PC())
-    {
+    auto currentPC = regs_.PC();
+
+    while (currentPC == regs_.PC() ) {
         emulateCycle();
     }
 }
