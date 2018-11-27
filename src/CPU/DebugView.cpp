@@ -63,14 +63,14 @@ void DebugView::render(sf::RenderWindow& window)
 std::string DebugView::format8BBitString(std::string regName, uint8_t val) const
 {
     std::stringstream temp;
-    temp << regName << ": " << std::to_string(val) << "\t" << std::hex << (int)val << '\n';
+    temp << regName << ": " << std::to_string(val) << '\t' << std::hex << std::setw(2) << std::setfill('0') << (int)val << '\n';
     return std::string(temp.str());
 }
 
 std::string DebugView::format16BBitString(std::string regName, uint16_t val) const
 {
     std::stringstream temp;
-    temp << regName << ": " << std::to_string(val) << " " << std::hex << val << '\n';
+    temp << regName << ": " << std::to_string(val) << " " << std::hex << std::setw(2) << std::setfill('0') << val << '\n';
     return std::string(temp.str());
 }
 
@@ -87,7 +87,7 @@ void DebugView::printMemAroundPC()
         {
             idx++;
             auto memDump = sf::Text(printMemLocation(n), font_, 16);
-            memDump.setPosition(700, 10 + memDump.getCharacterSize() * idx);
+            memDump.setPosition(700, memDump.getCharacterSize() * idx);
             if (n == regs_.PC())
             {
                 memDump.setFillColor(sf::Color::Red);
