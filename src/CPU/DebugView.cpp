@@ -29,9 +29,16 @@ void DebugView::render(sf::RenderWindow& window)
     content.append(format8BBitString("D", regs_.D()));
     content.append(format8BBitString("E", regs_.E()));
     content.append(format8BBitString("F", regs_.F()));
+    content.append(format8BBitString("L", regs_.L()));
+
 
     content.append(format16BBitString("PC", regs_.PC()));
     content.append(format16BBitString("SP", regs_.SP()));
+    content.append(format16BBitString("AF", regs_.AF()));
+    content.append(format16BBitString("BC", regs_.BC()));
+    content.append(format16BBitString("DE", regs_.DE()));
+    content.append(format16BBitString("HL", regs_.HL()));
+
 
 
     if (content != "")
